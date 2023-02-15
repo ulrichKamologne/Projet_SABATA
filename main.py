@@ -90,7 +90,7 @@ class App(customtkinter.CTk):
         # Map 2D plus panneau de signalisation plus audio
         for w in self.winfo_children():
             w.destroy()
-        self.pack_propagate(0)
+        self.pack_propagate(1)
 
         self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=600, height=30)
         self.my_frame_haut_1.grid(row=10, column=0)
