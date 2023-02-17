@@ -49,10 +49,26 @@ class App(customtkinter.CTk):
         self.title("SYSTEME SABATA")
         self.minsize(width_tk, height_tk)
         self.maxsize(width_tk, height_tk)
+        self.configure(fg_color="#11284A") ##19064A, #3FC5E0, #3F0BE0, #1E1E69, #3D23F7, #19D3F7, #41B2E0,#EFD3F7 ,#EFFEF7,#19FEF7,#070D4A
         # set grid layout 1x2
         self.grid_rowconfigure(5, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
+        self.tamplet()
+        # contenue de la page
+        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(200, 200))
+        self.my_frame = customtkinter.CTkFrame(master=self, width=200, height=200)
+        self.my_frame.place(x=width_tk / 2 - 100, y=50)
+        self.photo = customtkinter.CTkLabel(self.my_frame, image=logo, text="")
+        self.photo.place(x=0, y=0)
+        self.button = customtkinter.CTkButton(master=self, command=self.button_select_option, text="CONNECTION",
+                                              width=120, height=30)
+        self.button.place(x=width_tk / 2 - 60, y=height_tk / 2 + 10)
+
+    def tamplet(self):
+
+        width_tk = 900
+        height_tk = 500
         self.my_frame_haut = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
                                                     corner_radius=0)
         self.my_frame_haut.grid(row=10, column=0)
@@ -76,14 +92,6 @@ class App(customtkinter.CTk):
         self.button_menu.place(x=width_tk / 2 - 20, y=0)
         self.button_mode.place(x=width_tk / 2 + 30, y=0)
 
-        # contenue de la page
-        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(25, 20))
-        self.my_frame = customtkinter.CTkFrame(master=self, width=200, height=200)
-        self.my_frame.place(x=width_tk / 2 - 100, y=50)
-        self.button = customtkinter.CTkButton(master=self, command=self.button_select_option, text="CONNECTION",
-                                              width=120, height=30)
-        self.button.place(x=width_tk / 2 - 60, y=height_tk / 2 + 10)
-
     def button_select_option(self):
         for w in self.winfo_children():
             w.destroy()
@@ -97,33 +105,14 @@ class App(customtkinter.CTk):
         hauteur_bnt = 30
         space_1 = 200
         space_entre_btn = 40
-
-        print("button click")
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                      corner_radius=0)
-        self.my_frame_haut_1.grid(row=10, column=0)
-        self.my_frame_bas_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                     corner_radius=0)
-        self.my_frame_bas_1.grid(row=0, column=0)
-        # touche barre de tache
-        # Créer un objet photo-image pour utiliser l'image
-        self.photo = customtkinter.CTkImage(Image.open("retour.png"), size=(30, 20))
-        # Ajouter l'image dans le bouton
-        self.button_menu = customtkinter.CTkButton(self.my_frame_haut_1, text="", image=self.photo, width=25, height=25,
-                                                   fg_color="#3C3F3F",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour = customtkinter.CTkButton(self.my_frame_haut_1, text="", width=25, height=25,
-                                                     image=self.photo, fg_color="#3C3F3F",
-                                                     text_color="#868282", command=self.menu)
-        self.button_mode = customtkinter.CTkButton(self.my_frame_haut_1, text="", width=25, height=25, image=self.photo,
-                                                   fg_color="#3C3F3F",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour.place(x=width_tk / 2 - 70, y=0)
-        self.button_menu.place(x=width_tk / 2 - 20, y=0)
-        self.button_mode.place(x=width_tk / 2 + 30, y=0)
+        # barre de tache , de menu
+        self.tamplet()
         # contenue de la page
-        self.my_frame_haut = customtkinter.CTkFrame(master=self, width=160, height=150)
-        self.my_frame_haut.place(x=width_tk / 2 - 80, y=40)
+        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(160, 150))
+        self.my_frame = customtkinter.CTkFrame(master=self, width=160, height=150)
+        self.my_frame.place(x=width_tk / 2 - 80, y=40)
+        self.photo = customtkinter.CTkLabel(self.my_frame, image=logo, text="")
+        self.photo.place(x=0, y=0)
         self.button_1 = customtkinter.CTkButton(master=self, command=self.option_1, text="option 1", width=larger_bunt,
                                                 height=hauteur_bnt)
         self.button_2 = customtkinter.CTkButton(master=self, command=self.option_2, text="option 2", width=larger_bunt,
@@ -141,6 +130,7 @@ class App(customtkinter.CTk):
         self.button_3.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + 2 * space_entre_btn)
         self.button_4.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + 3 * space_entre_btn)
         self.button_param.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + 4 * space_entre_btn)
+        print("button click")
 
     def option_1(self):
         # camera plus panneau de signalisation plus audio
@@ -149,30 +139,9 @@ class App(customtkinter.CTk):
         width_tk = 900
         height_tk = 500
         self.pack_propagate(0)
-        self.my_frame_bas_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                     corner_radius=0)
-        self.my_frame_bas_1.grid(row=10, column=0)
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                      corner_radius=0)
-        self.my_frame_haut_1.grid(row=0, column=0)
 
-        # touche barre de tache
-        # Créer un objet photoimage pour utiliser l'image
-        self.photo = customtkinter.CTkImage(Image.open("retour.png"), size=(25, 20))
-        # Ajouter l'image dans le bouton
-        self.bouton_menu = customtkinter.CTkButton(self.my_frame_bas_1, text="", image=self.photo, width=25, height=25,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour = customtkinter.CTkButton(self.my_frame_bas_1, text="", width=25, height=25,
-                                                     image=self.photo, fg_color="#868282",
-                                                     text_color="#868282", command=self.menu)
-        self.bouton_mode = customtkinter.CTkButton(self.my_frame_bas_1, text="", width=25, height=25, image=self.photo,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour.place(x=width_tk / 2 - 70, y=0)
-        self.bouton_menu.place(x=width_tk / 2 - 20, y=0)
-        self.bouton_mode.place(x=width_tk / 2 + 30, y=0)
-
+        # barre de tache , de menu
+        self.tamplet()
         # contenu de la page
         self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
                                                    fg_color="#C1ECE6")
@@ -212,30 +181,8 @@ class App(customtkinter.CTk):
         width_tk = 900
         height_tk = 500
 
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                      corner_radius=0)
-        self.my_frame_bas_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                     corner_radius=0)
-        self.my_frame_bas_1.grid(row=10, column=0)
-        self.my_frame_haut_1.grid(row=0, column=0)
-
-        # touche barre de tache
-        # Créer un objet photoimage pour utiliser l'image
-        self.photo = customtkinter.CTkImage(Image.open("retour.png"), size=(25, 20))
-        # Ajouter l'image dans le bouton
-        self.bouton_menu = customtkinter.CTkButton(self.my_frame_bas_1, text="", image=self.photo, width=25, height=25,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour = customtkinter.CTkButton(self.my_frame_bas_1, text="", width=25, height=25,
-                                                     image=self.photo, fg_color="#868282",
-                                                     text_color="#868282", command=self.menu)
-        self.bouton_mode = customtkinter.CTkButton(self.my_frame_bas_1, text="", width=25, height=25, image=self.photo,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour.place(x=width_tk / 2 - 70, y=0)
-        self.bouton_menu.place(x=width_tk / 2 - 20, y=0)
-        self.bouton_mode.place(x=width_tk / 2 + 30, y=0)
-
+        # barre de tache , de menu
+        self.tamplet()
         # contenu de la page
         self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
                                                    fg_color="#C1ECE6")
@@ -276,30 +223,8 @@ class App(customtkinter.CTk):
         width_tk = 900
         height_tk = 500
 
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                      corner_radius=0)
-        self.my_frame_bas_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                     corner_radius=0)
-        self.my_frame_haut_1.grid(row=10, column=0)
-        self.my_frame_bas_1.grid(row=0, column=0)
-
-        # touche barre de tache
-        # Créer un objet photoimage pour utiliser l'image
-        self.photo = customtkinter.CTkImage(Image.open("retour.png"), size=(25, 20))
-        # Ajouter l'image dans le bouton
-        self.bouton_menu = customtkinter.CTkButton(self.my_frame_haut_1, text="", image=self.photo, width=25, height=25,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour = customtkinter.CTkButton(self.my_frame_haut_1, text="", width=30, height=25,
-                                                     image=self.photo, fg_color="#868282",
-                                                     text_color="#868282", command=self.menu)
-        self.bouton_mode = customtkinter.CTkButton(self.my_frame_haut_1, text="", width=25, height=25, image=self.photo,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour.place(x=width_tk / 2 - 70, y=0)
-        self.bouton_menu.place(x=width_tk / 2 - 20, y=0)
-        self.bouton_mode.place(x=width_tk / 2 + 30, y=0)
-
+        # barre de tache , de menu
+        self.tamplet()
         # contenu de la page
         self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
                                                    fg_color="#C1ECE6")
@@ -340,30 +265,8 @@ class App(customtkinter.CTk):
         width_tk = 900
         height_tk = 500
 
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                      corner_radius=0)
-        self.my_frame_bas_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                     corner_radius=0)
-        self.my_frame_haut_1.grid(row=10, column=0)
-        self.my_frame_bas_1.grid(row=0, column=0)
-
-        # touche barre de tache
-        # Créer un objet photoimage pour utiliser l'image
-        self.photo = customtkinter.CTkImage(Image.open("retour.png"), size=(30, 20))
-        # Ajouter l'image dans le bouton
-        self.bouton_menu = customtkinter.CTkButton(self.my_frame_haut_1, text="", image=self.photo, width=25, height=25,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour = customtkinter.CTkButton(self.my_frame_haut_1, text="", width=25, height=25,
-                                                     image=self.photo, fg_color="#868282",
-                                                     text_color="#868282", command=self.menu)
-        self.bouton_mode = customtkinter.CTkButton(self.my_frame_haut_1, text="", width=25, height=25, image=self.photo,
-                                                   fg_color="#868282",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour.place(x=width_tk / 2 - 70, y=0)
-        self.bouton_menu.place(x=width_tk / 2 - 20, y=0)
-        self.bouton_mode.place(x=width_tk / 2 + 30, y=0)
-
+        # barre de tache , de menu
+        self.tamplet()
         # contenu de la page
         self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
                                                    fg_color="#C1ECE6")
@@ -404,10 +307,8 @@ class App(customtkinter.CTk):
         width_tk = 900
         height_tk = 50
 
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30)
-        self.my_frame_haut_1.grid(row=10, column=0)
-        self.my_frame_haut_1 = customtkinter.CTkFrame(master=self, width=width_tk, height=30)
-        self.my_frame_haut_1.grid(row=0, column=0)
+        # barre de tache , de menu
+        self.tamplet()
 
         print("parameter modifier")
 
