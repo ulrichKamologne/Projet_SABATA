@@ -1,340 +1,423 @@
 import customtkinter
-import folium
+from tkintermapview import TkinterMapView
 from PIL import Image
 import numpy as np
+import time
+# import Map_2d
+import sys
+from win10toast import ToastNotifier
+import webbrowser
+import speech_recognition as sr
 
 customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
-
-class Map3d:
-
-    def __init__(self):
-        super().__init__()
-
-
-class Camera:
-
-    def __init__(self):
-        super().__init__()
-
-
-class Map2d:
-
-    def __init__(self):
-        super().__init__()
-        longitude = 1.33
-        latitude = 42
-        tail_zoom = 20
-        c = folium.Map(location=[longitude, latitude], zoom_start=tail_zoom)
-        c.save("map.html")
-
-
 # debut interface application
 class App(customtkinter.CTk):
+    scale = 1
+    color_of_Fame = "#11284A"
+    width_tk = 900
+    height_tk = 500
+    larger_bunt = 200
+    hauteur_bnt = 30
 
-    def __init__(self):
-        super().__init__()
-        self.button_param = None
-        self.button_4 = None
-        self.button_3 = None
-        self.button_2 = None
-        self.button_1 = None
-        self.button_menu = None
-        self.my_frame_bas_1 = None
-        self.my_frame_haut_1 = None
-        width_tk = 900
-        height_tk = 500
+    def __init__ (self, *args, **kwargs):
+        customtkinter.CTk.__init__(self, *args, **kwargs)
+        # appelle
+
         self.geometry("500x300")
         self.title("SYSTEME SABATA")
-        self.minsize(width_tk, height_tk)
-        self.maxsize(width_tk, height_tk)
-        self.configure(fg_color="#11284A") ##19064A, #3FC5E0, #3F0BE0, #1E1E69, #3D23F7, #19D3F7, #41B2E0,#EFD3F7 ,#EFFEF7,#19FEF7,#070D4A
+        self.minsize(App.width_tk, App.height_tk)
+        self.maxsize(App.width_tk, App.height_tk)
+        self.configure(fg_color="#11284A")  ##19064A, #3FC5E0, #3F0BE0, #1E1E69, #3D23F7
         # set grid layout 1x2
-        self.grid_rowconfigure(5, weight=1)
+        self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        self.tamplet()
+        if App.scale >= 1:
+            nsew = 'nsew'
+        else:
+            nsew = ''
         # contenue de la page
-        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(200, 200))
-        self.my_frame = customtkinter.CTkFrame(master=self, width=200, height=200)
-        self.my_frame.place(x=width_tk / 2 - 100, y=50)
-        self.photo = customtkinter.CTkLabel(self.my_frame, image=logo, text="")
-        self.photo.place(x=0, y=0)
-        self.button = customtkinter.CTkButton(master=self, command=self.button_select_option, text="CONNECTION",
-                                              width=120, height=30)
-        self.button.place(x=width_tk / 2 - 60, y=height_tk / 2 + 10)
+        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(200, 200))  # size=(App.width_tk, App.height_tk)
+        my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        my_frame.grid(row=0, column=0, sticky=nsew)
 
-    def tamplet(self):
+        my_frame.grid_rowconfigure(0, weight=1)
+        my_frame.grid_columnconfigure(0, weight=1)
 
-        width_tk = 900
-        height_tk = 500
-        self.my_frame_haut = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                    corner_radius=0)
-        self.my_frame_haut.grid(row=10, column=0)
-        self.my_frame_bas = customtkinter.CTkFrame(master=self, width=width_tk, height=30, fg_color="#3C3F3F",
-                                                   corner_radius=0)
-        self.my_frame_bas.grid(row=0, column=0)
-        # touche barre de tache
-        # Créer un objet photo-image pour utiliser l'image
-        self.photo = customtkinter.CTkImage(Image.open("retour.png"), size=(25, 20))
-        # Ajouter l'image dans le button
-        self.button_menu = customtkinter.CTkButton(self.my_frame_haut, text="", image=self.photo, width=25, height=25,
-                                                   fg_color="#3C3F3F",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour = customtkinter.CTkButton(self.my_frame_haut, text="", width=25, height=25,
-                                                     image=self.photo, fg_color="#3C3F3F",
-                                                     text_color="#868282", command=self.menu)
-        self.button_mode = customtkinter.CTkButton(self.my_frame_haut, text="", width=25, height=25, image=self.photo,
-                                                   fg_color="#3C3F3F",
-                                                   text_color="#868282", command=self.menu)
-        self.button_retour.place(x=width_tk / 2 - 70, y=0)
-        self.button_menu.place(x=width_tk / 2 - 20, y=0)
-        self.button_mode.place(x=width_tk / 2 + 30, y=0)
+        self.photo = customtkinter.CTkLabel(my_frame, image=logo, text="")
+        self.photo.grid(row=0, column=0)
 
-    def button_select_option(self):
-        for w in self.winfo_children():
-            w.destroy()
-        self.pack_propagate()
+        self.frames = {}
 
+        for F in (page_connect, page_option, option_1, option_2, option_3, option_4, parametre):
+            frame = F(my_frame)
+            self.frames[F] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.after(2500, self.show_frame, page_connect)
+
+    def show_frame (self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
+
+    def change_appearance_mode (self, new_appearance_mode: str):
+        customtkinter.set_appearance_mode(new_appearance_mode)
+
+
+# premiere page contenant le bouton connection
+class page_connect(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        width_tk = 900
-        height_tk = 500
-        larger_bunt = 150
-        hauteur_bnt = 30
-        space_1 = 200
-        space_entre_btn = 40
-        # barre de tache , de menu
-        self.tamplet()
-        # contenue de la page
-        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(160, 150))
-        self.my_frame = customtkinter.CTkFrame(master=self, width=160, height=150)
-        self.my_frame.place(x=width_tk / 2 - 80, y=40)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
+
+        self.my_frame.grid_rowconfigure(0, weight=0)
+        self.my_frame.grid_rowconfigure(1, weight=1)
+        self.my_frame.grid_rowconfigure(2, weight=0)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.my_frame.grid_columnconfigure(1, weight=0)
+        self.my_frame.grid_columnconfigure(2, weight=1)
+        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(200, 200))
         self.photo = customtkinter.CTkLabel(self.my_frame, image=logo, text="")
-        self.photo.place(x=0, y=0)
-        self.button_1 = customtkinter.CTkButton(master=self, command=self.option_1, text="option 1", width=larger_bunt,
-                                                height=hauteur_bnt)
-        self.button_2 = customtkinter.CTkButton(master=self, command=self.option_2, text="option 2", width=larger_bunt,
-                                                height=hauteur_bnt)
-        self.button_3 = customtkinter.CTkButton(master=self, command=self.option_3, text="option 3", width=larger_bunt,
-                                                height=hauteur_bnt)
-        self.button_4 = customtkinter.CTkButton(master=self, command=self.option_4, text="option 4", width=larger_bunt,
-                                                height=hauteur_bnt)
-        self.button_param = customtkinter.CTkButton(master=self, command=self.parametre, text="parametre",
-                                                    width=larger_bunt, height=hauteur_bnt)
+        self.photo.grid(row=0, column=1, sticky="nesw", pady=(20, 20))
+        self.button = customtkinter.CTkButton(master=self.my_frame, text="CONNECTION",
+                                              width=120, height=30, command=lambda: app.show_frame(page_option))
+        self.button.grid(row=1, column=1, sticky="n")
+
+
+# deuxieme page contenant les option
+class page_option(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
+
+        self.my_frame.grid_rowconfigure(0, weight=0)
+        self.my_frame.grid_rowconfigure(1, weight=0)
+        self.my_frame.grid_rowconfigure(3, weight=0)
+        self.my_frame.grid_rowconfigure(4, weight=0)
+        self.my_frame.grid_rowconfigure(5, weight=0)
+        self.my_frame.grid_rowconfigure(6, weight=0)
+        self.my_frame.grid_rowconfigure(7, weight=0)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.my_frame.grid_columnconfigure(1, weight=0)
+        self.my_frame.grid_columnconfigure(2, weight=1)
+        logo = customtkinter.CTkImage(Image.open("tes.png"), size=(200, 150))
+        self.photo = customtkinter.CTkLabel(self.my_frame, image=logo, text="")
+        self.photo.grid(row=0, column=1, pady=(20, 10))
+        self.button_1 = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(option_1),
+                                                text="option 1", width=App.larger_bunt,
+                                                height=App.hauteur_bnt)
+        self.button_2 = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(option_2),
+                                                text="option 2", width=App.larger_bunt,
+                                                height=App.hauteur_bnt)
+        self.button_3 = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(option_3),
+                                                text="option 3", width=App.larger_bunt,
+                                                height=App.hauteur_bnt)
+        self.button_4 = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(option_4),
+                                                text="option 4", width=App.larger_bunt,
+                                                height=App.hauteur_bnt)
+        self.button_param = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(parametre),
+                                                    text="parametre",
+                                                    width=App.larger_bunt, height=App.hauteur_bnt)
 
         # positionement des boutton
-        self.button_1.place(x=width_tk / 2 - larger_bunt / 2, y=space_1)
-        self.button_2.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + space_entre_btn)
-        self.button_3.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + 2 * space_entre_btn)
-        self.button_4.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + 3 * space_entre_btn)
-        self.button_param.place(x=width_tk / 2 - larger_bunt / 2, y=space_1 + 4 * space_entre_btn)
+        self.button_1.grid(row=1, column=1, pady=(10, 10))
+        self.button_2.grid(row=2, column=1, pady=(10, 10))
+        self.button_3.grid(row=3, column=1, pady=(10, 10))
+        self.button_4.grid(row=4, column=1, pady=(10, 10))
+        self.button_param.grid(row=5, column=1, pady=(10, 10))
+
+        # verification
         print("button click")
 
-    def option_1(self):
-        # camera plus panneau de signalisation plus audio
-        for w in self.winfo_children():
-            w.destroy()
-        width_tk = 900
-        height_tk = 500
-        self.pack_propagate(0)
 
-        # barre de tache , de menu
-        self.tamplet()
-        # contenu de la page
-        self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
-                                                   fg_color="#C1ECE6")
-        self.my_frame_donnee = customtkinter.CTkFrame(master=self, width=200, height=height_tk - 60, fg_color="#43DBFA")
-        self.my_frame_panneau_vitesse = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100, height=100,
-                                                               corner_radius=75,
-                                                               fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_panneau_secondaire = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100,
-                                                                  height=100, corner_radius=75,
-                                                                  fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_map.place(x=0, y=30)
-        self.my_frame_donnee.place(x=width_tk - 198, y=30)
-        self.my_frame_panneau_vitesse.place(x=50, y=40)
-        self.my_frame_panneau_secondaire.place(x=50, y=180)
-        # text de la fenetre
-        self.label_p_vitess = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau vitesse !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_second = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau second !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_vitess.place(x=20, y=0)
-        self.label_p_second.place(x=20, y=150)
+# page contenant l'option_1
+class option_1(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
 
-        # en atente du map 2d (de la fonction)
-        self.label_map = customtkinter.CTkLabel(self.my_frame_map, text=" chargement de la camera ...",
-                                                compound="left", font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_map.place(x=(width_tk - 400) / 2, y=(height_tk - 60) / 2)
+        self.my_frame.grid_rowconfigure(0, weight=1)
+        self.my_frame.grid_rowconfigure(1, weight=1)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.frame_camera = customtkinter.CTkFrame(master=self.my_frame, fg_color="#000000",
+                                                   corner_radius=0, height=App.height_tk)
+        self.frame_camera.grid(row=0, column=0, sticky="nesw", pady=(1, 1))
+        self.frame_donnee = customtkinter.CTkFrame(master=self.my_frame, fg_color="#FFFFFF",
+                                                   corner_radius=0)
+        self.frame_donnee.grid(row=0, column=1, sticky="nesw", pady=(1, 1))
 
-        print("un instant nous inisialison la camera")
+        # verification
+        print("initialisation de la camera")
 
-    def option_2(self):
+
+class option_2(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
+
+        self.my_frame.grid_rowconfigure(0, weight=1)
+        self.my_frame.grid_rowconfigure(1, weight=1)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.frame_camera = customtkinter.CTkFrame(master=self.my_frame, fg_color="#000000",
+                                                   corner_radius=0, height=App.height_tk)
+        self.frame_camera.grid(row=0, column=0, sticky="nesw", pady=(1, 1))
+        self.frame_donnee = customtkinter.CTkFrame(master=self.my_frame, fg_color="#FFFFFF",
+                                                   corner_radius=0)
+        self.frame_donnee.grid(row=0, column=1, sticky="nesw", pady=(1, 1))
+
         # Map 2D plus panneau de signalisation plus audio
-        for w in self.winfo_children():
-            w.destroy()
-        self.pack_propagate(1)
-        width_tk = 900
-        height_tk = 500
 
-        # barre de tache , de menu
-        self.tamplet()
-        # contenu de la page
-        self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
-                                                   fg_color="#C1ECE6")
-        self.my_frame_donnee = customtkinter.CTkFrame(master=self, width=200, height=height_tk - 60, fg_color="#43DBFA")
-        self.my_frame_panneau_vitesse = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100, height=100,
-                                                               corner_radius=75,
-                                                               fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_panneau_secondaire = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100,
-                                                                  height=100, corner_radius=75,
-                                                                  fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_map.place(x=0, y=30)
-        self.my_frame_donnee.place(x=width_tk - 198, y=30)
-        self.my_frame_panneau_vitesse.place(x=50, y=40)
-        self.my_frame_panneau_secondaire.place(x=50, y=180)
-        # text de la fenetre
-        self.label_p_vitess = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau vitesse !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_second = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau second !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_vitess.place(x=20, y=0)
-        self.label_p_second.place(x=20, y=150)
+        # ============ frame_right(frame_donnee) ============
+        self.frame_donnee.grid_columnconfigure(0, weight=0)
+        self.frame_donnee.grid_rowconfigure(0, weight=1)
+        self.frame_donnee.grid_rowconfigure(1, weight=1)
+        self.frame_donnee.grid_rowconfigure(2, weight=0)
+        self.frame_donnee.grid_rowconfigure(3, weight=0)
+        self.frame_donnee.grid_rowconfigure(4, weight=0)
 
-        # en atente du map 2d (de la fonction)
-        self.label_map = customtkinter.CTkLabel(self.my_frame_map, text=" chargement du Map 2d ...",
-                                                compound="left", font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_map.place(x=(width_tk - 400) / 2, y=(height_tk - 60) / 2)
+        self.button_1 = customtkinter.CTkButton(master=self.frame_donnee,
+                                                text="Set Marker", command= self.start)
+        self.button_1.grid(pady=(10, 0), padx=(20, 20), row=2, column=0)
+
+        self.button_2 = customtkinter.CTkButton(master=self.frame_donnee,
+                                                text="Clear Markers", command= self.on_closing)
+        self.button_2.grid(pady=(10, 0), padx=(20, 20), row=3, column=0)
+
+        self.map_option_menu = customtkinter.CTkOptionMenu(self.frame_donnee, values=["OpenStreetMap", "Google normal",
+                                                                                     "Google satellite"], command= self.change_map)
+        self.map_option_menu.grid(row=4, column=0, padx=(20, 20), pady=(10, 10))
+
+        # ============ frame_left(frame_camera) ============
+
+        self.frame_camera.grid_columnconfigure(0, weight=1)
+        self.frame_camera.grid_rowconfigure(0, weight=0)
+        self.frame_camera.grid_rowconfigure(1, weight=1)
+        self.marker_list = []
+        self.map_widget = TkinterMapView(self.frame_camera, corner_radius=0, height= App.height_tk)
+        self.map_widget.grid(row=1, column=0,  sticky="nswe", padx=(0, 0), pady=(0, 0))
+        
+        self.entry = customtkinter.CTkEntry(master=self.frame_camera,
+                                            placeholder_text="type address")
+        self.entry.grid(row=0, column=0, sticky="we", padx=(12, 110), pady=12)
+        self.entry.bind("<Return>")
+
+        self.button_5 = customtkinter.CTkButton(master=self.frame_camera,
+                                                text="Search",
+                                                width=90, command= self.search_event)
+        self.button_5.grid(row=0, column=0, sticky="e", padx=(12, 10), pady=12)
+        # Set default values
+        self.map_widget.set_address("Bandjoun")
+        self.map_option_menu.set("OpenStreetMap")
+        #self.map_widget.set_position(36.1699, -115.1396)
+        #self.map_widget.set_zoom(15)
+        # self.appearance_mode_optionemenu.set("Dark")
 
         print("un instant nous inisialison la camera")
         print("nous actualison le Map 2D")
 
-    def option_3(self):
-        # Map 3D plus panneau de signalisation plus audio
-        for w in self.winfo_children():
-            w.destroy()
-        self.pack_propagate(0)
-        width_tk = 900
-        height_tk = 500
+        # verification
+        print("initialisation de la camera")
 
-        # barre de tache , de menu
-        self.tamplet()
-        # contenu de la page
-        self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
-                                                   fg_color="#C1ECE6")
-        self.my_frame_donnee = customtkinter.CTkFrame(master=self, width=200, height=height_tk - 60, fg_color="#43DBFA")
-        self.my_frame_panneau_vitesse = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100, height=100,
-                                                               corner_radius=75,
-                                                               fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_panneau_secondaire = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100,
-                                                                  height=100, corner_radius=75,
-                                                                  fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_map.place(x=0, y=30)
-        self.my_frame_donnee.place(x=width_tk - 198, y=30)
-        self.my_frame_panneau_vitesse.place(x=50, y=40)
-        self.my_frame_panneau_secondaire.place(x=50, y=180)
-        # text de la fenetre
-        self.label_p_vitess = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau vitesse !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_second = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau second !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_vitess.place(x=20, y=0)
-        self.label_p_second.place(x=20, y=150)
+    def search_event (self, event=None):
+        self.map_widget.set_address(self.entry.get())
 
-        # en atente du map 2d (de la fonction)
-        self.label_map = customtkinter.CTkLabel(self.my_frame_map, text=" chargement du Map 3d ...",
-                                                compound="left", font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_map.place(x=(width_tk - 400) / 2, y=(height_tk - 60) / 2)
+    def set_marker_event (self):
+        current_position = self.map_widget.get_position()
+        self.marker_list.append(self.map_widget.set_marker(current_position[0], current_position[1]))
 
-        print("un instant nous inisialison la camera")
+    def clear_marker_event (self):
+        for marker in self.marker_list:
+            marker.delete()
+
+    def change_appearance_mode (self, new_appearance_mode: str):
+        customtkinter.set_appearance_mode(new_appearance_mode)
+
+    def change_map (self, new_map: str):
+        if new_map == "OpenStreetMap":
+            self.map_widget.set_tile_server ("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
+        elif new_map == "Google normal":
+            self.map_widget.set_tile_server ("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga",
+                                             max_zoom=22)
+        elif new_map == "Google satellite":
+            self.map_widget.set_tile_server ("https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga",
+                                             max_zoom=22)
+
+    def on_closing (self, event=0):
+        self.destroy()
+
+    def start (self):
+        self.mainloop()
+
+
+class option_3(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
+
+        self.my_frame.grid_rowconfigure(0, weight=1)
+        self.my_frame.grid_rowconfigure(1, weight=1)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.frame_camera = customtkinter.CTkFrame(master=self.my_frame, fg_color="#000000",
+                                                   corner_radius=0, height=App.height_tk)
+        self.frame_camera.grid(row=0, column=0, sticky="nesw", pady=(1, 1))
+        self.frame_donnee = customtkinter.CTkFrame(master=self.my_frame, fg_color="#FFFFFF",
+                                                   corner_radius=0)
+        self.frame_donnee.grid(row=0, column=1, sticky="nesw", pady=(1, 1))
+
+        # verification
+        print("initialisation de la camera")
         print("nous actualison le Map 3D")
 
-    def option_4(self):
-        # Map 3D plus panneau de signalisation plus audio
-        for w in self.winfo_children():
-            w.destroy()
-        self.pack_propagate(0)
-        width_tk = 900
-        height_tk = 500
 
-        # barre de tache , de menu
-        self.tamplet()
-        # contenu de la page
-        self.my_frame_map = customtkinter.CTkFrame(master=self, width=width_tk - 200, height=height_tk - 60,
-                                                   fg_color="#C1ECE6")
-        self.my_frame_donnee = customtkinter.CTkFrame(master=self, width=200, height=height_tk - 60, fg_color="#43DBFA")
-        self.my_frame_panneau_vitesse = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100, height=100,
-                                                               corner_radius=75,
-                                                               fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_panneau_secondaire = customtkinter.CTkFrame(master=self.my_frame_donnee, width=100,
-                                                                  height=100, corner_radius=75,
-                                                                  fg_color="#FFFFFF", border_color="#FFFFFF")
-        self.my_frame_map.place(x=0, y=30)
-        self.my_frame_donnee.place(x=width_tk - 198, y=30)
-        self.my_frame_panneau_vitesse.place(x=50, y=40)
-        self.my_frame_panneau_secondaire.place(x=50, y=180)
-        # text de la fenetre
-        self.label_p_vitess = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau vitesse !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_second = customtkinter.CTkLabel(self.my_frame_donnee, text="panneau second !",
-                                                     compound="left",
-                                                     font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_p_vitess.place(x=20, y=0)
-        self.label_p_second.place(x=20, y=150)
+class option_4(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
 
-        # en atente du map 2d (de la fonction)
-        self.label_map = customtkinter.CTkLabel(self.my_frame_map, text=" chargement du Map ...",
-                                                compound="left", font=customtkinter.CTkFont(size=18, weight="bold"))
-        self.label_map.place(x=(width_tk - 400) / 2, y=(height_tk - 60) / 2)
+        self.my_frame.grid_rowconfigure(0, weight=1)
+        self.my_frame.grid_rowconfigure(1, weight=1)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.frame_camera = customtkinter.CTkFrame(master=self.my_frame, fg_color="#000000",
+                                                   corner_radius=0, height=App.height_tk)
+        self.frame_camera.grid(row=0, column=0, sticky="nesw", pady=(1, 1))
+        self.frame_donnee = customtkinter.CTkFrame(master=self.my_frame, fg_color="#FFFFFF",
+                                                   corner_radius=0)
+        self.frame_donnee.grid(row=0, column=1, sticky="nesw", pady=(1, 1))
 
-        print("un instant nous inisialison la camera")
-        print("nous actualison le Map")
+        # verification
+        print("initialisation de la camera")
+        print ("nous actualison le Map")
 
-    def parametre(self):
-        # reglage des parametre
-        for w in self.winfo_children():
-            w.destroy()
-        self.pack_propagate(0)
-        width_tk = 900
-        height_tk = 50
 
-        # barre de tache , de menu
-        self.tamplet()
+class parametre(customtkinter.CTkFrame):
+    def __init__ (self, parent):
+        customtkinter.CTkFrame.__init__(self, parent)
+        self.configure(fg_color=App.color_of_Fame, corner_radius=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=0)
+        self.my_frame_haut = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                    corner_radius=0)
+        self.my_frame_haut.grid(row=0, column=0, sticky="nsew")
+        self.my_frame = customtkinter.CTkFrame(master=self, corner_radius=0, fg_color=App.color_of_Fame)
+        self.my_frame.grid(row=1, column=0, sticky="nesw")
+        self.my_frame_bas = customtkinter.CTkFrame(master=self, height=30, fg_color="#000000",
+                                                   corner_radius=0)
+        self.my_frame_bas.grid(row=2, column=0, sticky="nesw")
 
+        self.my_frame.grid_rowconfigure(0, weight=1)
+        self.my_frame.grid_rowconfigure(1, weight=1)
+        self.my_frame.grid_columnconfigure(0, weight=1)
+        self.frame_camera = customtkinter.CTkFrame(master=self.my_frame, fg_color="#000000",
+                                                   corner_radius=0, height=App.height_tk)
+        self.frame_camera.grid(row=0, column=0, sticky="nesw", pady=(1, 1))
+        self.frame_donnee = customtkinter.CTkFrame(master=self.my_frame, fg_color="#FFFFFF",
+                                                   corner_radius=0)
+        self.frame_donnee.grid(row=0, column=1, sticky="nesw", pady=(1, 1))
+
+        # verification
         print("parameter modifier")
 
-    # function des touche
 
-    def mode(self):
+
+
+    # function des touche
+    def mode (self):
 
         for w in self.winfo_children():
             w.destroy()
-        self.pack_propagate(0)
+        self.pack_propagate()
 
     # retour au menu principal
-    def menu(self):
+    def menu (self):
         self.destroy()
 
     # retour a la page precedente
-    def retour(self, name):
+    def retour (self, name):
+        pass
 
-        if name == "option_1":
-            for w in self.winfo_children():
-                w.destroy()
-            self.pack_propagate(0)
-            self.button_callback()
     # selection
 
 
 if __name__ == "__main__":
+    start = time.time()
     app = App()
     app.mainloop()
+    end = time.time()
+    print(end - start)
