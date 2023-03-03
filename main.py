@@ -153,6 +153,7 @@ class App(customtkinter.CTk):
         self.my_frame_haut_1.grid(row=0, column=0)
 
         print("fin")
+        
     # retour au menu principal
     def menu(self):
         self.destroy()
