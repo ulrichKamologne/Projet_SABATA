@@ -3,6 +3,7 @@ from tkintermapview import TkinterMapView
 from PIL import Image
 import numpy as np
 import time
+import network
 # import Map_2d
 import sys
 from win10toast import ToastNotifier
@@ -51,7 +52,7 @@ class App(customtkinter.CTk):
 
         self.frames = {}
 
-        for F in (page_connect, page_option, option_1, option_2, option_3, option_4, parametre):
+        for F in (page_connect, page_option, option_1, option_2, option_3, option_4, parametre, page_connect):
             frame = F(my_frame)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -61,6 +62,20 @@ class App(customtkinter.CTk):
     def show_frame (self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+
+    def retour(self):
+        pass
+
+    def bar_de_tache (self, name):
+        # show selected frame
+        if name == "option_1" or "option_2" or "option_3" or "option_4":
+            page_option
+
+        if name == "page_option":
+            page_connect
+
+        if name == "page_connect":
+            pass
 
     def change_appearance_mode (self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -97,7 +112,6 @@ class page_connect(customtkinter.CTkFrame):
         self.button = customtkinter.CTkButton(master=self.my_frame, text="CONNECTION",
                                               width=120, height=30, command=lambda: app.show_frame(page_option))
         self.button.grid(row=1, column=1, sticky="n")
-
 
 # deuxieme page contenant les option
 class page_option(customtkinter.CTkFrame):
@@ -142,7 +156,7 @@ class page_option(customtkinter.CTkFrame):
         self.button_4 = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(option_4),
                                                 text="option 4", width=App.larger_bunt,
                                                 height=App.hauteur_bnt)
-        self.button_param = customtkinter.CTkButton(master=self.my_frame, command=lambda: app.show_frame(parametre),
+        self.button_param = customtkinter.CTkButton(master=self.my_frame, command= lambda: app.show_frame(parametre),
                                                     text="parametre",
                                                     width=App.larger_bunt, height=App.hauteur_bnt)
 
@@ -156,7 +170,44 @@ class page_option(customtkinter.CTkFrame):
         # verification
         print("button click")
 
+    def two_funcs(self, *funcs):
+        def two_funcs(*args, **kwargs):
+            for f in funcs:
+                f(*args, **kwargs)
+        return two_funcs
+    def wifi(self):
+        pass
+        '''
+        # Connexion au Wifi
 
+        WIFI_SSID = 'TECNO CAMON 12 Air'
+        WIFI_PASSWORD = 'kengnetherese'
+
+        # Desactive le reseau Wifi interne a la carte
+        ap_if = network.WLAN(network.AP_IF)
+        ap_if.active (False)
+
+        # connection de la carte au reseau Wifi
+        wlan = network.WLAN(network.STA_IF)
+        wlan.active (True)
+        time.sleep (3)
+        print ('connexion au reseau...')
+        wlan.connect (WIFI_SSID, WIFI_PASSWORD)
+        time.sleep (1)
+        # 20 Tentatives de connexions au Wifi
+        MAX_ATTEMPTS = 20
+        attempt_count = 0
+
+        while not wlan.isconnected () and attempt_count < MAX_ATTEMPTS:
+            attempt_count += 1
+            time.sleep(1)
+            wlan.connect(WIFI_SSID, WIFI_PASSWORD)
+
+        if attempt_count == MAX_ATTEMPTS:
+            print('impossible de rejoindre le reseau Wifi')
+            sys.exit()
+        print('config reseau:', wlan.ifconfig())
+        '''
 # page contenant l'option_1
 class option_1(customtkinter.CTkFrame):
     def __init__ (self, parent):
@@ -246,7 +297,7 @@ class option_2(customtkinter.CTkFrame):
         self.marker_list = []
         self.map_widget = TkinterMapView(self.frame_camera, corner_radius=0, height= App.height_tk)
         self.map_widget.grid(row=1, column=0,  sticky="nswe", padx=(0, 0), pady=(0, 0))
-        
+
         self.entry = customtkinter.CTkEntry(master=self.frame_camera,
                                             placeholder_text="type address")
         self.entry.grid(row=0, column=0, sticky="we", padx=(12, 110), pady=12)
@@ -257,8 +308,15 @@ class option_2(customtkinter.CTkFrame):
                                                 width=90, command= self.search_event)
         self.button_5.grid(row=0, column=0, sticky="e", padx=(12, 10), pady=12)
         # Set default values
-        self.map_widget.set_address("Bandjoun")
+        self.map_widget.set_address("Bandjoun", marker=True)
         self.map_option_menu.set("OpenStreetMap")
+        self.map_widget.set_zoom(25)
+        self.map_widget.add_left_click_map_command (self.left_click_event)
+    def left_click_event (self, coordinates_tuple):
+        print ("Left click event with coordinates:", coordinates_tuple)
+        self.map_widget.set_zoom(25)
+
+
         #self.map_widget.set_position(36.1699, -115.1396)
         #self.map_widget.set_zoom(15)
         # self.appearance_mode_optionemenu.set("Dark")
@@ -395,8 +453,9 @@ class parametre(customtkinter.CTkFrame):
         print("parameter modifier")
 
 
-
-
+class after:
+    def change_appearance_mode_event(self, new_appearance_mode):
+        customtkinter.set_appearance_mode(new_appearance_mode)
     # function des touche
     def mode (self):
 
