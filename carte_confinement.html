@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_9aaed012630cdebfd4631e5ba2bd4128 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_9aaed012630cdebfd4631e5ba2bd4128" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_9aaed012630cdebfd4631e5ba2bd4128 = L.map(
+                "map_9aaed012630cdebfd4631e5ba2bd4128",
+                {
+                    center: [46.548312, 3.287667],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 12,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_c45d321969a7fc8d03cf8265ad2e4025 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_9aaed012630cdebfd4631e5ba2bd4128);
+        
+    
+            var marker_e5447f53063ceab9e8baf19cb6a8aa8d = L.marker(
+                [46.548312, 3.287667],
+                {}
+            ).addTo(map_9aaed012630cdebfd4631e5ba2bd4128);
+        
+    
+            var icon_20bebfdcf91186b41a0572e7d7f9f6c4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_e5447f53063ceab9e8baf19cb6a8aa8d.setIcon(icon_20bebfdcf91186b41a0572e7d7f9f6c4);
+        
+    
+        var popup_ee0eb6f2b3c8841ca34e72682b9cbb01 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b6530cb8116bea047903ed68ad52a453 = $(`<div id="html_b6530cb8116bea047903ed68ad52a453" style="width: 100.0%; height: 100.0%;">Lycée Agricole du Bourbonnais</div>`)[0];
+                popup_ee0eb6f2b3c8841ca34e72682b9cbb01.setContent(html_b6530cb8116bea047903ed68ad52a453);
+            
+        
+
+        marker_e5447f53063ceab9e8baf19cb6a8aa8d.bindPopup(popup_ee0eb6f2b3c8841ca34e72682b9cbb01)
+        ;
+
+        
+    
+    
+            var circle_205b1d3175b56beec17ed5fff0fcdbd1 = L.circle(
+                [46.548312, 3.287667],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1000, "stroke": true, "weight": 3}
+            ).addTo(map_9aaed012630cdebfd4631e5ba2bd4128);
+        
+    
+            var circle_ae2099c1c04d4c6220a020e5c4d74de3 = L.circle(
+                [46.548312, 3.287667],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5000, "stroke": true, "weight": 3}
+            ).addTo(map_9aaed012630cdebfd4631e5ba2bd4128);
+        
+</script>
+</html>
